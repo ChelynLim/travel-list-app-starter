@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 const initialItems = [
-  { id: 1, description: "Shirt", quantity: 5, packed: false },
-  { id: 2, description: "Pants", quantity: 2, packed: true },
+  { id: 1, description: "Shirt", quantity: 5, packed: true },
+  { id: 2, description: "Pants", quantity: 2, packed: false },
 ];
 
 function Logo() {
@@ -62,30 +62,31 @@ function Form({ handleAddItems }) {
   );
 }
 
-function PackingList({ items }) {
+function PackingList({ items, handleDelete }) {
   return (
     <div className="list">
       <ul>
         {items.map((item) => (
-          <Item key={item.id} item={item} />
+          <Item key={item.id} item={item} handleDelete={handleDelete} />
         ))}
       </ul>
     </div>
   );
 }
 
-function Item({ item }) {
+function Item({ item, handleDelete }) {
   return (
     <li style={{ textDecoration: item.packed ? "line-through" : "none" }}>
       {item.quantity} x {item.description}
+      <button onClick={() => handleDelete(item.id)}>Delete</button>
     </li>
   );
 }
 
-function Stats({ items, packedPercentage }) {
+function Stats({ items }) {
   const packedItems = items.filter(item => item.packed).length;
   const totalItems = items.length;
-  packedPercentage = totalItems === 0 ? 0 : Math.round((packedItems / totalItems) * 100);
+  const packedPercentage = totalItems === 0 ? 0 : Math.round((packedItems / totalItems) * 100);
 
   return (
     <footer className="stats">
@@ -131,6 +132,10 @@ function App() {
     setItems((prevItems) => [...prevItems, item]);
   }
 
+  function handleDeleteItem(id) {
+    setItems((prevItems) => prevItems.filter(item => item.id !== id));
+  }
+
   const filteredItems = items.filter(item =>
     item.description.toLowerCase().includes(search.toLowerCase())
   );
@@ -150,7 +155,7 @@ function App() {
         style={{ marginBottom: '20px', padding: '10px', width: '100%', borderRadius: '5px', border: '1px solid #ccc' }}
       />
       <Form handleAddItems={handleAddItems} />
-      <PackingList items={filteredItems} />
+      <PackingList items={filteredItems} handleDelete={handleDeleteItem} />
       <Stats items={items} packedPercentage={packedPercentage} />
       <Mascot packedPercentage={packedPercentage} />
     </div>
