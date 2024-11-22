@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 const initialItems = [
-  { id: 1, description: "Shirt", quantity: 5, packed: true },
-  { id: 2, description: "Pants", quantity: 2, packed: false },
+  { id: 1, description: "Shirt", quantity: 5, packed: false },
+  { id: 2, description: "Pants", quantity: 2, packed: true },
 ];
 
 function Logo() {
@@ -82,10 +82,10 @@ function Item({ item }) {
   );
 }
 
-function Stats({ items }) {
+function Stats({ items, packedPercentage }) {
   const packedItems = items.filter(item => item.packed).length;
   const totalItems = items.length;
-  const packedPercentage = totalItems === 0 ? 0 : Math.round((packedItems / totalItems) * 100);
+  packedPercentage = totalItems === 0 ? 0 : Math.round((packedItems / totalItems) * 100);
 
   return (
     <footer className="stats">
@@ -94,11 +94,31 @@ function Stats({ items }) {
   );
 }
 
-function Mascot() {
+function Mascot({ packedPercentage }) {
+  let animation;
+  let message;
+
+  if (packedPercentage === 100) {
+    animation = 'bounce 2s infinite';
+    message = "All packed! Ready to go! 🎉";
+  } else if (packedPercentage >= 80) {
+    animation = 'spin 2s infinite';
+    message = "Almost there! Keep going! 💪";
+  } else if (packedPercentage >= 50) {
+    animation = 'pulse 1s infinite';
+    message = "Halfway there! Keep it up! 👍";
+  } else if (packedPercentage > 0) {
+    animation = 'shake 2s infinite';
+    message = "Just getting started! 🚀";
+  } else {
+    animation = 'wobble 2s infinite';
+    message = "Let's start packing! 🧳";
+  }
+
   return (
-    <div className="mascot">
-      <img src="https://i.pinimg.com/originals/22/f5/1b/22f51bb3fd22322992533c969ddfe9c5.jpg" alt="Artem" />
-      <p>You're almost done!</p>
+    <div className="mascot" style={{ animation }}>
+      <img src="https://tot.wiki/thumb.php?f=Summer_Fun_2024_D2.jpg&width=900" alt="Artem" />
+      <p>{message}</p>
     </div>
   );
 }
@@ -115,6 +135,10 @@ function App() {
     item.description.toLowerCase().includes(search.toLowerCase())
   );
 
+  const packedItems = items.filter(item => item.packed).length;
+  const totalItems = items.length;
+  const packedPercentage = totalItems === 0 ? 0 : Math.round((packedItems / totalItems) * 100);
+
   return (
     <div className="app">
       <Logo />
@@ -127,8 +151,8 @@ function App() {
       />
       <Form handleAddItems={handleAddItems} />
       <PackingList items={filteredItems} />
-      <Stats items={items} />
-      <Mascot />
+      <Stats items={items} packedPercentage={packedPercentage} />
+      <Mascot packedPercentage={packedPercentage} />
     </div>
   );
 }

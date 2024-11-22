@@ -13,10 +13,10 @@ html {
 body {
   font-family: 'Mystery Quest', cursive;
   background: linear-gradient(135deg, #a0abda, #a386da, #d18484);
-  color: #c0e646;
+  color: #030300;
   margin: 0;
   padding: 0;
-  background-image: url('https://th.bing.com/th/id/R.4d3ca56b090fa8dad26bcad1e1ba88b2?rik=Eo5sfEy2H7zQhg&riu=http%3a%2f%2fwww.transparentpng.com%2fthumb%2fgalaxy%2fsystems-nasa-galaxy-sky-meteor-planet-pictures-21.png&ehk=PLOoi7kPSFfe2vgYRZCpH7nhFq1j8ixI0DuZdJd8kFE%3d&risl=&pid=ImgRaw&r=0');
+  background-image: url('https://www.nicepng.com/png/full/236-2361416_transparent-northern-lights-png.png');
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -126,5 +126,65 @@ h1, h2, h3, h4, h5, h6 {
   }
   60% {
     transform: translateY(-15px);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  50% {
+    transform: translateX(10px);
+  }
+  75% {
+    transform: translateX(-10px);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes wobble {
+  0% {
+    transform: translateX(0%);
+  }
+  15% {
+    transform: translateX(-25%) rotate(-5deg);
+  }
+  30% {
+    transform: translateX(20%) rotate(3deg);
+  }
+  45% {
+    transform: translateX(-15%) rotate(-3deg);
+  }
+  60% {
+    transform: translateX(10%) rotate(2deg);
+  }
+  75% {
+    transform: translateX(-5%) rotate(-1deg);
+  }
+  100% {
+    transform: translateX(0%);
   }
 }
