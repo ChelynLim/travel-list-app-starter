@@ -1,99 +1,15 @@
 import { useState } from "react";
+import Logo from "./Logo";
+import Form from "./Form";
+import PackingList from "./PackingList";
+import Stats from "./Stats";
+import Item from "./Item";
+
 
 const initialItems = [
   { id: 1, description: "Shirt", quantity: 5, packed: true },
   { id: 2, description: "Pants", quantity: 2, packed: false },
 ];
-
-function Logo() {
-  return <h1>My Travel List</h1>;
-}
-
-function Form({ handleAddItems }) {
-  const [description, setDescription] = useState("");
-  const [quantity, setQuantity] = useState(1);
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    if (!description) return;
-
-    const newItem = {
-      id: Date.now(),
-      description,
-      quantity,
-      packed: false,
-    };
-
-    handleAddItems(newItem);
-    setDescription("");
-    setQuantity(1);
-  }
-
-  function handleDescriptionChange(event) {
-    setDescription(event.target.value);
-  }
-
-  function handleQuantityChange(event) {
-    setQuantity(Number(event.target.value));
-  }
-
-  return (
-    <form className="add-form" onSubmit={handleSubmit}>
-      <h3>What do you need to pack?</h3>
-      <label>
-        Quantity:
-        <select value={quantity} onChange={handleQuantityChange}>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-        </select>
-      </label>
-      <label>
-        Description:
-        <input
-          type="text"
-          placeholder="Item..."
-          value={description}
-          onChange={handleDescriptionChange}
-        />
-      </label>
-      <button type="submit">Add</button>
-    </form>
-  );
-}
-
-function PackingList({ items, handleDelete }) {
-  return (
-    <div className="list">
-      <ul>
-        {items.map((item) => (
-          <Item key={item.id} item={item} handleDelete={handleDelete} />
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function Item({ item, handleDelete }) {
-  return (
-    <li style={{ textDecoration: item.packed ? "line-through" : "none" }}>
-      {item.quantity} x {item.description}
-      <button onClick={() => handleDelete(item.id)}>Delete</button>
-    </li>
-  );
-}
-
-function Stats({ items }) {
-  const packedItems = items.filter(item => item.packed).length;
-  const totalItems = items.length;
-  const packedPercentage = totalItems === 0 ? 0 : Math.round((packedItems / totalItems) * 100);
-
-  return (
-    <footer className="stats">
-      <em>You have {totalItems} items in the list. You already packed {packedItems} ({packedPercentage}%).</em>
-    </footer>
-  );
-}
 
 function Mascot({ packedPercentage }) {
   let animation;
@@ -127,6 +43,7 @@ function Mascot({ packedPercentage }) {
 function App() {
   const [items, setItems] = useState(initialItems);
   const [search, setSearch] = useState("");
+  const [sortOrder, setSortOrder] = useState("input");
 
   function handleAddItems(item) {
     setItems((prevItems) => [...prevItems, item]);
@@ -136,7 +53,33 @@ function App() {
     setItems((prevItems) => prevItems.filter(item => item.id !== id));
   }
 
-  const filteredItems = items.filter(item =>
+  function handleUpdateItem(id) {
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, packed: !item.packed } : item
+      )
+    );
+  }
+
+  function handleClearItems() {
+    setItems([]);
+  }
+
+  function handleSortChange(event) {
+    setSortOrder(event.target.value);
+  }
+
+  const sortedItems = [...items].sort((a, b) => {
+    if (sortOrder === "description") {
+      return a.description.localeCompare(b.description);
+    } else if (sortOrder === "packed") {
+      return a.packed - b.packed;
+    } else {
+      return a.id - b.id;
+    }
+  });
+
+  const filteredItems = sortedItems.filter(item =>
     item.description.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -155,7 +98,18 @@ function App() {
         style={{ marginBottom: '20px', padding: '10px', width: '100%', borderRadius: '5px', border: '1px solid #ccc' }}
       />
       <Form handleAddItems={handleAddItems} />
-      <PackingList items={filteredItems} handleDelete={handleDeleteItem} />
+      <div style={{ marginBottom: '20px' }}>
+        <label>
+          Sort by:
+          <select value={sortOrder} onChange={handleSortChange}>
+            <option value="input">Input Order</option>
+            <option value="description">Description</option>
+            <option value="packed">Packed Status</option>
+          </select>
+        </label>
+        <button onClick={handleClearItems} style={{ marginLeft: '10px' }}>Clear All</button>
+      </div>
+      <PackingList items={filteredItems} handleDelete={handleDeleteItem} handleUpdate={handleUpdateItem} />
       <Stats items={items} packedPercentage={packedPercentage} />
       <Mascot packedPercentage={packedPercentage} />
     </div>
