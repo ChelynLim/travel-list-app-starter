@@ -18,7 +18,7 @@ function Mascot({ packedPercentage }) {
   if (packedPercentage === 100) {
     animation = 'bounce 2s infinite';
     message = "All packed! Ready to go! 🎉";
-  } else if (packedPercentage >= 80) {
+  } else if (packedPercentage >= 75) {
     animation = 'spin 2s infinite';
     message = "Almost there! Keep going! 💪";
   } else if (packedPercentage >= 50) {
